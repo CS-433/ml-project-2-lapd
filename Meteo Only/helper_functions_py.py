@@ -15,6 +15,8 @@ import numpy as np
 from torch.utils.data import Subset
 import seaborn as sns
 import matplotlib.pyplot as plt
+
+
 def save_labels_to_excel(dataset, output_directory):
     """
     Save labels to an Excel file.
@@ -189,6 +191,51 @@ def plot_ghi_data_distribution(ghi_dataset):
     plt.ylabel('Count')
     plt.show()
 
+
+
+def plot_ghi_data_distribution_after_modification(ghi_dataset):
+    # Convert the dataset to a Pandas DataFrame
+    ghi,hour,minute,month,year = [],[],[],[],[]
+    for sample in ghi_dataset:
+      ghi.append(sample[1][0].item())
+      hour.append(sample[0][0][3].item())
+      minute.append(sample[0][0][4].item())
+      month.append(sample[0][0][1].item())
+      year.append(sample[0][0][2].item())
+    df = pd.DataFrame({
+        'GHI': ghi,
+        'Hour': hour,
+        'Minute': minute,
+        'Month': month,
+        'Year': year  # Assuming you have a 'year' attribute in your GHIDataset
+    })
+
+    # Convert Hour, Minute, Month, and Year columns to integers
+    df['Hour'] = df['Hour'].astype(int)
+    df['Minute'] = df['Minute'].astype(int)
+    df['Month'] = df['Month'].astype(int)
+    df['Year'] = df['Year'].astype(int)
+
+    # Create a new column representing both hours and minutes as a string
+    df['HourMinute'] = df['Hour'].astype(str) + ':' + df['Minute'].astype(str)
+
+    # Create a boxplot using Seaborn
+    plt.figure(figsize=(18, 6))  # Adjust the figure size as needed
+    sns.boxplot(x='HourMinute', y='GHI', data=df)
+    plt.title('Boxplots of GHI for Each Hour and Minute')
+    plt.xlabel('Hour and Minute')
+    plt.ylabel('GHI')
+    plt.xticks(rotation=90)  # Rotate x-axis labels for better visibility
+    plt.show()
+
+    # Create a histogram of the number of data points per month and year
+    plt.figure(figsize=(18, 6))  # Adjust the figure size as needed
+    sns.histplot(x='Month', data=df, bins=12, hue='Year', multiple="stack", palette="tab10")
+    plt.title('Histogram of Number of Data Points per Month and Year')
+    plt.xlabel('Month')
+    plt.ylabel('Count')
+    plt.show()
+
 def create_ghi_summary(ghi_dataset, output_path=None):
     """
     Create a summary DataFrame containing the hour, minute, median, Q1, and Q3 for each time.
@@ -202,28 +249,22 @@ def create_ghi_summary(ghi_dataset, output_path=None):
     """
     ghi_dataset = ghi_dataset.dataset
     df = pd.DataFrame({
-        'GHI': ghi_dataset.GHI.numpy(),
+        'GHI': ghi_dataset.labels.numpy(),
         'Hour': ghi_dataset.hour.numpy(),
         'Minute': ghi_dataset.minute.numpy(),
-        'Month': ghi_dataset.month.numpy(),
-        'Year': ghi_dataset.year.numpy()  # Assuming you have a 'year' attribute in your GHIDataset
     })
 
     # Convert Hour, Minute, Month, and Year columns to integers
     df['Hour'] = df['Hour'].astype(int)
     df['Minute'] = df['Minute'].astype(int)
-    df['Month'] = df['Month'].astype(int)
-    df['Year'] = df['Year'].astype(int)
-
-    # Create a new column representing both hours and minutes as a string
-    df['HourMinute'] = df['Hour'].astype(str) + ':' + df['Minute'].astype(str)
-
+    
     # Group by hour and minute, and aggregate GHI data
-    summary_df = df.groupby(['Hour', 'Minute']).agg({'GHI': ['median', 'quantile', 'quantile']}).reset_index()
+    summary_df = df.groupby(['Hour', 'Minute']).agg(['median', lambda x: x.quantile(0.25), lambda x: x.quantile(0.75)]).reset_index()
+
     summary_df.columns = ['Hour', 'Minute', 'Median', 'Q1', 'Q3']
 
     # Print or use the summary DataFrame as needed
-    print(summary_df)
+ 
 
     # Save the summary DataFrame to an Excel file if output_path is provided
     if output_path:
