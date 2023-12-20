@@ -78,7 +78,7 @@ def split_at_locations(dataset, start_indices, end_indices):
         training_idx.extend(range(max(0, start_idx), min(len(dataset), end_idx)))
 
     training_set = Subset(dataset, np.setdiff1d(dataset_idx, training_idx))
-    validation_sets = [Subset(dataset, range(start_idx, end_idx)) for start_idx, end_idx in zip(start_indices, end_indices)]
+    validation_sets = [Subset(dataset, np.arange(start_idx, end_idx)) for start_idx, end_idx in zip(start_indices, end_indices)]
 
     return training_set, validation_sets
 
