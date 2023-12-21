@@ -61,7 +61,7 @@ There are two datasets.
 We recommend running this code on google colab to avoid having to change the code too much for the import of the data. When running each file make sure all the data is at the same level and that the path to the data is correct (google drive preferably). This means that to run e.g. model B, all the dataset files must be in a folder along with model_B.pt to make the importation work. The path that you should initialize is 'drive/MyDrive/\<your-path-in-your-google-drive\>' and can be changed at the beginning of each notebook.
 
 To run a file :
-1. open google collad and import the targeted notebook
+1. open google collab and import the targeted notebook
 2. open your drive and import the dataset on a "data" folder. Upload the .pt and the .pkl corresponding to the notebook/model in the same folder (more generally, upload the content of the git folder in the drive folder)
 3. open the notebook and update the path to the data
 4. make sure you meet all the requierement in the requierement.txt
