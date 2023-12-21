@@ -13,6 +13,7 @@ The packages to install are the following :
 - google.colab (to import files from google drive directly)
 - Vit pytorch (used for the visual transformer)
 - pickle (to save the result of the model)
+- collections (to count hashable object)
              
 Some other libraries that do not need packages :
 
