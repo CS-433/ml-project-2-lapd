@@ -12,6 +12,7 @@ The packages to install are the following :
 - Seaborn   (used for visualisation purposes)
 - google.colab (to import files from google drive directly)
 - Vit pytorch (used for the visual transformer)
+- pickle (to save the result of the model)
              
 Some other libraries that do not need packages :
 
@@ -20,3 +21,4 @@ Some other libraries that do not need packages :
 - time (to evaluate execution time)
 - datetime (to have datetime class that is easier to handle)
 - itertools (create combinations of lists for cross-validation)
+
